@@ -26,6 +26,7 @@
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBookModal">
         Add Book
       </button>
+      <div class="card-deck d-flex flex-wrap"></div>
     </div>
 
     <!-- Modal -->
@@ -39,7 +40,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <form>
+            <form id="addBookForm">
               <div class="form-group">
                 <!-- Book title -->
                 <label for="title">Title</label>
@@ -49,8 +50,19 @@
                 <label for="author">Author</label>
                 <input type="text" class="form-control" id="author">
                 <small id="authorHelp" class="form-text text-muted">Write the author for the book you want to add.</small>
-                
-
+                <!-- Book release year -->
+                <label for="releaseYear">Release Year</label>
+                <input type="number" class="form-control" id="releaseYear" min="0">
+                <small id="releaseYearHelp" class="form-text text-muted">Enter the release year for the book you want to add.</small>
+                <!-- Insert read status -->
+                <label for="readRadio">Have you read this book?</label>
+                <div class="radio" id="read">
+                  <label><input type="radio" name="readRadio" value="1">Yes</label>
+                  <label><input type="radio" name="readRadio" value="0" checked>No</label>
+                </div>
+                <small id="readHelp" class="form-text text-muted">Check "Yes" if you've already read the book you want to add.</small>
+                <!-- Submit button -->
+                <button type="submit" id="submitBookButton" class="btn btn-primary" data-dismiss="modal">Add Book</button>
               </div>
 
             </form>
