@@ -2,10 +2,13 @@ let myLibrary = [];
 
 // Add book listener
 const submitBookButton = document.querySelector('#submitBookButton');
-submitBookButton.addEventListener('click', () => {
+document.getElementById('addBookForm').onsubmit = function() {
     addBookToLibrary();
-    renderBooks();   
-});
+    renderBooks();
+    $('#addBookModal').modal('hide');
+    document.getElementById("addBookForm").reset();
+    return false;
+};
 
 // Book constructor
 function Book(title, author, year, read) {
