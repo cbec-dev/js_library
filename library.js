@@ -133,9 +133,9 @@ function generateBookCard(book) {
 }
 
 // Add some initial books
-b1 = new Book("Thrawn", "Timothy Zahn", 2014, true);
-b2 = new Book("Thrawn: Alliances", "Timothy Zahn", 2015, false);
-b3 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, false);
+b1 = new Book("Thrawn", "Timothy Zahn", 2017, true);
+b2 = new Book("Thrawn: Alliances", "Timothy Zahn", 2018, false);
+b3 = new Book("Thrawn: Treason", "Timothy Zahn", 2019, false);
 myLibrary.push(b1,b2,b3);
 
 renderBooks();
