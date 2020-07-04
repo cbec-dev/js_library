@@ -1,15 +1,24 @@
 let myLibrary = [];
 
+// Add book listener
 const submitBookButton = document.querySelector('#submitBookButton');
-submitBookButton.addEventListener('click', addBookToLibrary);
-document.getElementById('addBookForm').onsubmit = addBookToLibrary;
+submitBookButton.addEventListener('click', () => {
+    addBookToLibrary();
+    renderBooks();   
+});
 
+// Book constructor
 function Book(title, author, year, read) {
     this.title = title;
     this.author = author;
     this.year = year;
     this.read = read;
 }
+
+// Read status toggler prototype function
+Book.prototype.readStatusToggle = function() {
+    this.read = !this.read;
+};
 
 function addBookToLibrary() {
     const title = document.getElementById('title').value;
@@ -19,8 +28,13 @@ function addBookToLibrary() {
     const book = new Book(title, author, year, read);
 
     myLibrary.push(book);
-    renderBooks();
     return false;
+}
+
+
+function removeBookFromLibrary(book) {
+    const idx = myLibrary.indexOf(book);
+    myLibrary.splice(idx,1);
 }
 
 function renderBooks() {
@@ -70,6 +84,13 @@ function generateBookCard(book) {
     // Create card footer
     const cardFooter = document.createElement('div');
     cardFooter.classList.add('card-footer');
+    // Create read status toggle
+    const readToggle = document.createElement('button');
+    readToggle.classList.add('readToggle');
+    const readIcon = document.createElement('i');
+    readIcon.classList.add('fas');
+    readIcon.classList.add('fa-book');
+    readToggle.appendChild(readIcon);
     // Create small read status text
     const cardReadSmall = document.createElement('small');
     cardReadSmall.classList.add('text-muted');
@@ -79,27 +100,42 @@ function generateBookCard(book) {
     else {
         cardReadSmall.textContent = 'Not read yet.'
     }
-    // Append small to card footer
+    // Append small and toggle to card footer
     cardFooter.appendChild(cardReadSmall);
+    cardFooter.appendChild(readToggle);
 
-    //Append body and footer to parent card
+    // Create delete button
+    const deleteButton = document.createElement('button');
+    deleteButton.classList.add('deleteBtn');
+    const deleteIcon = document.createElement('i');
+    deleteIcon.classList.add('fas');
+    deleteIcon.classList.add('fa-minus-circle');
+    deleteButton.appendChild(deleteIcon);
+
+    // Add listeners
+    deleteButton.addEventListener('click', () => {
+        removeBookFromLibrary(book);
+        renderBooks();
+    });
+    readToggle.addEventListener('click', () => {
+        book.readStatusToggle();
+        renderBooks();
+    });
+
+    //Append everything to parent card
+    bookCard.setAttribute('book-idx', myLibrary.indexOf(book));
     bookCard.appendChild(bookImg);
     bookCard.appendChild(cardBody);
     bookCard.appendChild(cardFooter);
+    bookCard.appendChild(deleteButton);
     
     return bookCard;
 }
 
 // Add some initial books
-b1 = new Book("Thrawn", "Timothy Zahn", 2014, 1);
-b2 = new Book("Thrawn: Alliances", "Timothy Zahn", 2015, 0);
-b3 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, 0);
-b4 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, 0);
-b5 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, 0);
-b6 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, 0);
-b7 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, 0);
-b8 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, 0);
-b9 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, 0);
-b10 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, 0);
-myLibrary.push(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10);
+b1 = new Book("Thrawn", "Timothy Zahn", 2014, true);
+b2 = new Book("Thrawn: Alliances", "Timothy Zahn", 2015, false);
+b3 = new Book("Thrawn: Treason", "Timothy Zahn", 2016, false);
+myLibrary.push(b1,b2,b3);
+
 renderBooks();

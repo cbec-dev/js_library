@@ -3,3 +3,35 @@
     max-width:10em;
     min-width: 10em;
 }
+
+.deleteBtn {
+    background-color: red;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    padding: 0.3em 0.5em;
+    font-size: large;
+    cursor: pointer;
+    position: absolute;
+    top: -0.5em;
+    right: -0.5em;
+}
+
+.deleteBtn:hover {
+    background-color: darkred;
+}
+
+.readToggle {
+    background-color: transparent;
+    position: absolute;
+    width: 20%;
+    right: 1em;
+    border: none;
+    color: black;
+    font-size: large;
+    cursor: pointer;
+}
+
+.readToggle:hover {
+    color: gray;
+}
