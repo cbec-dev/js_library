@@ -1,4 +1,34 @@
 let myLibrary = [];
+// Firebase config
+var firebaseConfig = {
+    apiKey: "AIzaSyAVlmsbjj2BTZxm6g11qkhw0vd3-JIUTCw",
+    authDomain: "js-library-4a1c2.firebaseapp.com",
+    databaseURL: "https://js-library-4a1c2.firebaseio.com",
+    projectId: "js-library-4a1c2",
+    storageBucket: "js-library-4a1c2.appspot.com",
+    messagingSenderId: "467361743764",
+    appId: "1:467361743764:web:56568f29f2b71c268a0581",
+    measurementId: "G-60VM4SXVNW"
+};
+// Firebase init  
+firebase.initializeApp(firebaseConfig);
+
+// Init realtime database
+var db = firebase.database().ref('books/');
+
+db.on('value', (snap) => {
+    console.log(snap.val());
+});
+
+// Write books to db
+function writeBook(id, book) {
+    db.push({
+      title: book.title,
+      author: book.author,
+      year: book.year,
+      read: book.read
+    });
+  }
 
 // Add book listener
 const submitBookButton = document.querySelector('#submitBookButton');
@@ -140,5 +170,9 @@ b1 = new Book("Thrawn", "Timothy Zahn", 2017, true);
 b2 = new Book("Thrawn: Alliances", "Timothy Zahn", 2018, false);
 b3 = new Book("Thrawn: Treason", "Timothy Zahn", 2019, false);
 myLibrary.push(b1,b2,b3);
+
+writeBook(1,b1);
+writeBook(2,b2);
+writeBook(3,b3);
 
 renderBooks();
