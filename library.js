@@ -14,74 +14,55 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 // Init realtime database
-var db = firebase.database().ref('books/');
+var db = firebase.database();
 
-db.on('value', (snap) => {
-    console.log(snap.val());
+// Listen for changes to refresh book cards
+db.ref('books/').on('value', () => {
+    renderBooks();
 });
 
 // Write books to db
-function writeBook(id, book) {
-    db.push({
+function writeBook(book) {
+    db.ref('books/').push({
       title: book.title,
       author: book.author,
       year: book.year,
       read: book.read
     });
-  }
+}
+
+// Generate card deck and fill with books from realtime db
+function renderBooks() {
+    db.ref('books/').once('value').then((snap) => {
+        const cardDeck = document.querySelector('.card-deck');
+        // Clear beforehand
+        while(cardDeck.firstChild) {
+            cardDeck.removeChild(cardDeck.lastChild);
+        }
+        snap.forEach(book => {
+            const bookCard = generateBookCard(book);
+            cardDeck.appendChild(bookCard);
+        });
+    });
+}
 
 // Add book listener
 const submitBookButton = document.querySelector('#submitBookButton');
 document.getElementById('addBookForm').onsubmit = function() {
-    addBookToLibrary();
-    renderBooks();
+    addBookFromForm();
     $('#addBookModal').modal('hide');
     document.getElementById("addBookForm").reset();
     return false;
 };
 
-// Book constructor
-function Book(title, author, year, read) {
-    this.title = title;
-    this.author = author;
-    this.year = year;
-    this.read = read;
-}
-
-// Read status toggler prototype function
-Book.prototype.readStatusToggle = function() {
-    this.read = !this.read;
-};
-
-function addBookToLibrary() {
+function addBookFromForm() {
     const title = document.getElementById('title').value;
     const author = document.getElementById('author').value;
     const year = document.getElementById('releaseYear').value;
     const read = document.querySelector('input[name="readRadio"]:checked').value;
-    const book = new Book(title, author, year, read);
+    const book = {title: title, author: author, year: year, read: read};
+    writeBook(book);
 
-    myLibrary.push(book);
-    return false;
-}
-
-
-function removeBookFromLibrary(book) {
-    const idx = myLibrary.indexOf(book);
-    myLibrary.splice(idx,1);
-}
-
-function renderBooks() {
-    const container = document.querySelector('.container');
-    const cardDeck = document.querySelector('.card-deck');
-    
-    // Clear beforehand
-    while(cardDeck.firstChild) {
-        cardDeck.removeChild(cardDeck.lastChild);
-    }
-
-    myLibrary.forEach(book => {
-        cardDeck.appendChild(generateBookCard(book));
-    });
 }
 
 function generateBookCard(book) {
@@ -101,14 +82,14 @@ function generateBookCard(book) {
     // Create card title for book title
     const cardTitle = document.createElement('h5');
     cardTitle.classList.add('card-title');
-    cardTitle.textContent = book.title;
+    cardTitle.textContent = book.val().title;
     // Create card small for book year
     const cardYearSmall = document.createElement('small');
-    cardYearSmall.textContent = book.year;
+    cardYearSmall.textContent = book.val().year;
     // Create card text for book author
     const cardText = document.createElement('p');
     cardText.classList.add('card-text');
-    cardText.textContent = book.author;
+    cardText.textContent = book.val().author;
     //Append title and text to card body
     cardBody.appendChild(cardTitle);
     cardBody.appendChild(cardYearSmall);
@@ -127,7 +108,7 @@ function generateBookCard(book) {
     // Create small read status text
     const cardReadSmall = document.createElement('small');
     cardReadSmall.classList.add('text-muted');
-    if(book.read) {
+    if(book.val().read) {
         cardReadSmall.textContent = 'Read.'    
     }
     else {
@@ -147,12 +128,10 @@ function generateBookCard(book) {
 
     // Add listeners
     deleteButton.addEventListener('click', () => {
-        removeBookFromLibrary(book);
-        renderBooks();
+        db.ref("books/" + book.key).set(null);
     });
     readToggle.addEventListener('click', () => {
-        book.readStatusToggle();
-        renderBooks();
+        db.ref("books/" + book.key + "/read").set(!book.val().read);
     });
 
     //Append everything to parent card
@@ -164,15 +143,5 @@ function generateBookCard(book) {
     
     return bookCard;
 }
-
-// Add some initial books
-b1 = new Book("Thrawn", "Timothy Zahn", 2017, true);
-b2 = new Book("Thrawn: Alliances", "Timothy Zahn", 2018, false);
-b3 = new Book("Thrawn: Treason", "Timothy Zahn", 2019, false);
-myLibrary.push(b1,b2,b3);
-
-writeBook(1,b1);
-writeBook(2,b2);
-writeBook(3,b3);
 
 renderBooks();
