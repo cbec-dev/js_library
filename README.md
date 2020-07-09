@@ -10,4 +10,4 @@ Construida con:
 * Javascript
 * Firebase Real Time Database
 
-[Ver en navegador](https://powei94.com/js_library/)
+[Ver en navegador](https://powei94.github.io/js_library/)
